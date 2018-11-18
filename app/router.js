@@ -14,7 +14,26 @@ module.exports = app => {
   // 上传文件
   app.post('/api/file/upload', jwt, app.controller.resourceUpload.upload);
   // 用户登录
-  app.post('/api/account/login', jwt, app.controller.accountLogin.login);
+  // app.post('/api/login', jwt, app.controller.accountLogin.login);
+
+
+  //test
+  app.post('/api/login', jwt, app.controller.userLogin.info);
+  app.post('/api/register', jwt, app.controller.userLogin.register);
+  app.get('/api/getinfo', jwt, app.controller.userLogin.getinfo);
+  app.get('/api/getdync/:id', jwt, app.controller.userLogin.getdync);
+
+  app.get('/dapi/:path', jwt, app.controller.userLogin.getapidata);
+  app.post('/api/addapi', jwt, app.controller.userLogin.addapi);
+  app.post('/api/updateapi', jwt, app.controller.userLogin.updateapi);
+  app.post('/api/deleteapi', jwt, app.controller.userLogin.deleteapi);
+  app.get('/api/apilist', jwt, app.controller.userLogin.apilist);
+
+  app.get('/api/getlist', jwt, app.controller.userLogin.getlist);
+  app.get('/api/getdbdata', jwt, app.controller.userLogin.getdbdata);
+
+
+
   // weChatApi
   app.get('/api/wechat/appid', jwt, app.controller.weChatApi.getAppId);
   app.get('/api/wechat/token', jwt, app.controller.weChatApi.getToken);

@@ -47,7 +47,7 @@ const getWhereQuery = function(where, entityAlias) {
   }
   // 生成搜索条件
   for (let i = 0; i < where.length; i++) {
-    for (let item in where[i]) {
+    for (const item in where[i]) {
       _where.push(`${entityAlias}.${item} ${getSqlCondition(where[i][item])}`);
     }
   }
@@ -68,7 +68,7 @@ const getSqlCondition = function(str) {
     } else if (typeof (str) === 'number') {
       res = `= ${str}`;
     }
-  }else {
+  } else {
     let value = str.split('_')[1];
     const condition = str.split('_')[0];
     let symbol = '';
@@ -104,7 +104,7 @@ const getSqlCondition = function(str) {
     }
     if (isNaN(value)) {
       value = `'${value}'`;
-    } else{
+    } else {
       value = `${value}`;
     }
     res = `${symbol} ${value}`;
@@ -156,7 +156,7 @@ const Columnmaker = function(entity) {
       for (let y = 0; y < relatedEntity.column.length; y++) {
         column.push(`${relatedEntity.alias}.${relatedEntity.column[y].name} as ${relatedEntity.alias}_${relatedEntity.column[y].name}`);
       }
-    }else {
+    } else {
       return Tools.logicResult(2);
     }
   }
@@ -173,12 +173,12 @@ const joinMaker = function(mainEntityName, relatedEntities) {
     let subKey = '';
     if (item.key.main.indexOf('.') > -1) {
       mainKey = item.key.main;
-    } else{
+    } else {
       mainKey = `${mainEntity.alias}.${item.key.main}`;
     }
     if (item.key.sub.indexOf('.') > -1) {
       subKey = item.key.sub;
-    } else{
+    } else {
       subKey = `${subEntity.alias}.${item.key.sub}`;
     }
 
@@ -187,43 +187,43 @@ const joinMaker = function(mainEntityName, relatedEntities) {
   return res;
 };
 
-const generatorQuery = function(entityName, pageAt = 1, where, orders, pageLimit = 10,type = 'query'){
-    let query = '';
-    let entity = entities[entityName]
-    //是否有实例
-    if(entity==undefined){
-        return Tools.logicResult(1)
-    }
-    
-    //生成column
-    let column = Columnmaker(entity)
-    if(column.errorCode!=0){
-        return Tools.logicResult(column.errorCode) 
-    }
-        column = column.data
-    
-    
-    //拼接select部分
-    if(type=='query'||type=='detail'){
-        query = `select ${column} from ${entity.name} as ${entity.alias} `;
-    }else{
-        query = `select count(${entity.alias}.id) as num from ${entity.name} as ${entity.alias} `;
-    }
-    query = query + joinMaker(entityName,entity.relatedEntities)
-    
-    //where条件拼接
-    query = query + getWhereQuery(where,entity.alias)
-    if(type=='detail'){
-        console.log(query)
-        return Tools.logicResult(0,query) 
-    }
-    //order拼接
-    query = query + getOrderQuery(orders,entity.alias)
-    //分页
-    if(type!='count'){
-        query = query + pagination(pageAt,pageLimit)
-    }
-    console.log(query)
-    return Tools.logicResult(0,query) 
+const generatorQuery = function(entityName, pageAt = 1, where, orders, pageLimit = 10, type = 'query') {
+  let query = '';
+  const entity = entities[entityName];
+  // 是否有实例
+  if (entity == undefined) {
+    return Tools.logicResult(1);
+  }
+
+  // 生成column
+  let column = Columnmaker(entity);
+  if (column.errorCode != 0) {
+    return Tools.logicResult(column.errorCode);
+  }
+  column = column.data;
+
+
+  // 拼接select部分
+  if (type == 'query' || type == 'detail') {
+    query = `select ${column} from ${entity.name} as ${entity.alias} `;
+  } else {
+    query = `select count(${entity.alias}.id) as num from ${entity.name} as ${entity.alias} `;
+  }
+  query = query + joinMaker(entityName, entity.relatedEntities);
+
+  // where条件拼接
+  query = query + getWhereQuery(where, entity.alias);
+  if (type == 'detail') {
+    console.log(query);
+    return Tools.logicResult(0, query);
+  }
+  // order拼接
+  query = query + getOrderQuery(orders, entity.alias);
+  // 分页
+  if (type != 'count') {
+    query = query + pagination(pageAt, pageLimit);
+  }
+  console.log(query);
+  return Tools.logicResult(0, query);
 };
 module.exports.generatorQuery = generatorQuery;

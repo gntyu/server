@@ -4,7 +4,7 @@ const errorMessage = require('../conf/errorMessage.js');
 const fail = function fail(code, e = null) {
   return {
     errorCode: code,
-    errorDetail: errorMessage[code].message || e,
+    errorDetail: (errorMessage[code]?errorMessage[code].message:null) || e,
   };
   // if(code==100){
   //   return {

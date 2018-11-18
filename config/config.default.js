@@ -7,14 +7,14 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_demo';
 
   // 自定义中间件
-  //config.middleware = [ 'json','xml','jwt'];
-  config.middleware = ['xml', 'json'];
+  // config.middleware = [ 'json','xml','jwt'];
+  config.middleware = [ 'xml', 'json' ];
 
   // log输出
   config.logger = {
     dir: './logs/demo-server',
     level: 'DEBUG',
-    allowDebugAtProd:true,
+    allowDebugAtProd: true,
   };
 
   // bodyParser设置
@@ -36,9 +36,9 @@ module.exports = appInfo => {
       host: 'localhost',
       port: '3306',
       user: 'root',
-      password: '123456',
+      password: '121121121',
       // 数据库名
-      database: 'demo',
+      database: 'admin-template',
     },
     // 是否加载到 app 上，默认开启
     app: true,
@@ -62,9 +62,9 @@ module.exports = appInfo => {
     maxFiles: 10000,
   };
 
-  //允许上传文件类型
+  // 允许上传文件类型
   config.multipart = {
-    fileSize:'10mb',
+    fileSize: '10mb',
     whitelist: [
       // images
       '.jpg',
@@ -91,8 +91,11 @@ module.exports = appInfo => {
       '.wma',
       '.mp4',
       '.avi',
-    ]
+    ],
   };
+
+  // 抓取数据的url
+  config.url="https://www.toutiao.com";
 
   return config;
 };
