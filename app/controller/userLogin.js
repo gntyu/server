@@ -61,16 +61,30 @@ class userLogin extends Controller {
 
   async getapidata(){
     const path = this.ctx.params;
-    console.log(path)
-    const res = await this.service.gonews.db.writeapi(path);//数据写入数据库
-    this.ctx.body='dynic!'
+    console.log('path',path);
+    const res = await this.service.gonews.db.getapidata(path);
+    console.log('typeof-res:',typeof(res));
+    const result =JSON.parse(res); 
+    console.log('result:',result);
+    this.ctx.body=result
   }
+
+  async getsys(){
+    const res = await this.service.gonews.db.getsys();
+    console.log('typeof-res:',typeof(res));
+    this.ctx.body={
+      data:{
+        list:res
+      }
+    }
+  }
+
 
   async addapi(){
     const obj = this.ctx.request.body;
     // console.log(obj)
     const res = await this.service.gonews.db.writeapi(obj);//数据写入数据库
-    console.log('res',res)
+    // console.log('res',res)
     this.ctx.body=res
   }
 
@@ -89,7 +103,8 @@ class userLogin extends Controller {
   }
 
   async apilist(){
-    const res = await this.service.gonews.db.apilist();
+    const obj = this.ctx.request.body;
+    const res = await this.service.gonews.db.apilist(obj);
     this.ctx.body={
       data:{
         list:res

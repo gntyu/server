@@ -69,7 +69,7 @@ class DbService extends Service {
   async updateapi(row,type){
     if(type=='update'){
       row.updateTime=new Date();
-      console.log('update---',row)
+      console.log('update---',row);
       const result = await this.app.mysql.update('apis', row);
       const insertsuccess = result.affectedRows ===1;
       if(insertsuccess){
@@ -90,9 +90,49 @@ class DbService extends Service {
     }
   }
 
-  async apilist (){
-    const res = await this.app.mysql.select('apis');
+  async getapidata (item){
+    let name ;
+    if(item.subpath){
+      name={ path : item.path+'/'+item.subpath};
+    }else{
+      name = {path:item.path};
+    }
+    console.log('name',name)
+    const res = await this.app.mysql.get('apis',name);
+    const data =res.result;
+    console.log('chaxun------data',data)
+    return data;
+  }
+
+  async apilist (obj){
+    console.log('obj======',obj);
+    let sql ='SELECT * FROM `apis` ';
+    if(obj&&obj.syscode&&obj.syscode.length>0){
+      obj.syscode.map((item,index)=>{
+        sql += index==0?'WHERE syscode ="'+item+'"':' OR syscode ="'+ item+'"';
+      })
+    }
+    console.log('sql======',sql);
+    // const sql = 'SELECT * FROM `apis` WHERE syscode = '+uc+' OR syscode = ''
+    const res = await this.app.mysql.query(sql);
     return res;
+  }
+
+  async getsys (){
+    const sql = 'SELECT DISTINCT `sysname`,`syscode`  FROM `apis`'
+    // console.log('sql------sys',sql)
+    const res = await this.app.mysql.query(sql);
+    let list=[];
+    res.map((item)=>{
+      if(item.sysname&&item.syscode){
+        list.push({
+          label:item.sysname,
+          value:item.syscode,
+        })
+      }
+    })
+    // console.log('====list====',list)
+    return list;
   }
 
 }

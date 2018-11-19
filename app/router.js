@@ -23,11 +23,15 @@ module.exports = app => {
   app.get('/api/getinfo', jwt, app.controller.userLogin.getinfo);
   app.get('/api/getdync/:id', jwt, app.controller.userLogin.getdync);
 
-  app.get('/dapi/:path', jwt, app.controller.userLogin.getapidata);
+  app.get('/api-portal/:path', jwt, app.controller.userLogin.getapidata);
+  app.get('/api-portal/:path/:subpath', jwt, app.controller.userLogin.getapidata);
+  app.post('/api-portal/:path', jwt, app.controller.userLogin.getapidata);
+  app.get('/api/getsys', jwt, app.controller.userLogin.getsys);
+
   app.post('/api/addapi', jwt, app.controller.userLogin.addapi);
   app.post('/api/updateapi', jwt, app.controller.userLogin.updateapi);
   app.post('/api/deleteapi', jwt, app.controller.userLogin.deleteapi);
-  app.get('/api/apilist', jwt, app.controller.userLogin.apilist);
+  app.post('/api/apilist', jwt, app.controller.userLogin.apilist);
 
   app.get('/api/getlist', jwt, app.controller.userLogin.getlist);
   app.get('/api/getdbdata', jwt, app.controller.userLogin.getdbdata);
