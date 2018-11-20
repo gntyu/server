@@ -61,12 +61,13 @@ class userLogin extends Controller {
 
   async getapidata(){
     const path = this.ctx.params;
+    const query = this.ctx.query;
     console.log('path',path);
-    const res = await this.service.gonews.db.getapidata(path);
-    console.log('typeof-res:',typeof(res));
-    const result =JSON.parse(res); 
-    console.log('result:',result);
-    this.ctx.body=result
+    const res = await this.service.gonews.db.getapidata(path,query);
+    // console.log('typeof-res:',typeof(res));
+  
+    // console.log('result:',result);
+    this.ctx.body=res
   }
 
   async getsys(){

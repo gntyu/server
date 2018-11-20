@@ -5,6 +5,7 @@ const fail = function fail(code, e = null) {
   return {
     errorCode: code,
     errorDetail: (errorMessage[code]?errorMessage[code].message:null) || e,
+    data:{}
   };
   // if(code==100){
   //   return {
@@ -49,6 +50,6 @@ module.exports.fail = fail;
 const success = function(data) {
   return Object.assign({
     errorCode: 0,
-  }, data);
+  }, {data});
 };
 module.exports.success = success;

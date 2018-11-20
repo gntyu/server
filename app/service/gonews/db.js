@@ -7,7 +7,6 @@ const Tools = require('../../util/tools.js');
 
 class DbService extends Service {
   async getdb() {
-    console.log('123')
     const data = await this.app.mysql.query('select name,password from user where name = ?', 'h');
     console.log('db',data[0])
   }
@@ -40,7 +39,13 @@ class DbService extends Service {
   async writeapi(obj) {
     console.log('写入API...')
     const res = await this.app.mysql.get('apis', {path:obj.path});
-    // console.log('res',res)
+    const list = await this.service.gonews.db.getsys();
+    let sysname;
+    list.map((item)=>{
+      if(item.value==obj.syscode){
+        sysname=item.label;
+      }
+    })
     if(!res){
       const row={
         id:Tools.randomString(36),
@@ -48,9 +53,12 @@ class DbService extends Service {
         desc: obj.desc,
         result: obj.result,
         nums: obj.nums,
+        syscode: obj.syscode,
+        sysname,
         isRandom:obj.isRandom?1:0,
         isExtend: obj.isExtend?1:0,
-        createTime: new Date()
+        createTime: new Date(),
+        updateTime: new Date()
       }
       const result = await this.app.mysql.insert('apis', row);
       const insertsuccess = result.affectedRows ===1;
@@ -68,14 +76,22 @@ class DbService extends Service {
 
   async updateapi(row,type){
     if(type=='update'){
-      row.updateTime=new Date();
-      console.log('update---',row);
-      const result = await this.app.mysql.update('apis', row);
-      const insertsuccess = result.affectedRows ===1;
-      if(insertsuccess){
-        return Response.success();
+      const sql = 'SELECT `path` FROM `apis` WHERE `id` !="'+row.id+'" AND`path` ="' + row.path+'"';
+      console.log('update---sql',sql);
+      const isExist = await this.app.mysql.query(sql);
+      console.log('update---isExist',isExist.length);
+      if(isExist.length==0){
+        row.updateTime=new Date();
+        console.log('update---',row);
+        const result = await this.app.mysql.update('apis', row);
+        const insertsuccess = result.affectedRows ===1;
+        if(insertsuccess){
+          return Response.success();
+        }else{
+          return Response.fail(140,'更新失败');
+        }
       }else{
-        return Response.fail(140,'更新失败');
+        return Response.fail(140,'path已存在！');
       }
     }else if(type=='delete'){
       console.log('delete---',row)
@@ -90,7 +106,7 @@ class DbService extends Service {
     }
   }
 
-  async getapidata (item){
+  async getapidata (item,query){
     let name ;
     if(item.subpath){
       name={ path : item.path+'/'+item.subpath};
@@ -99,7 +115,16 @@ class DbService extends Service {
     }
     console.log('name',name)
     const res = await this.app.mysql.get('apis',name);
-    const data =res.result;
+    // const data =res.result;
+    const data =JSON.parse(res.result); 
+    // if(data.urlFilter&&data.urlFilter)
+    if(data['urlFilter']){
+      const key = data['urlFilter'];
+      console.log('------------',key)
+      if(query[key])data.data[key]=Number(query[key]);
+    }
+
+    console.log('chaxun------query',query)
     console.log('chaxun------data',data)
     return data;
   }
@@ -112,6 +137,7 @@ class DbService extends Service {
         sql += index==0?'WHERE syscode ="'+item+'"':' OR syscode ="'+ item+'"';
       })
     }
+    sql += ' ORDER BY `updateTime` DESC'
     console.log('sql======',sql);
     // const sql = 'SELECT * FROM `apis` WHERE syscode = '+uc+' OR syscode = ''
     const res = await this.app.mysql.query(sql);
