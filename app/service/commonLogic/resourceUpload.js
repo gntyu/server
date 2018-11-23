@@ -108,7 +108,7 @@ const qiniuUploadFile = function(id, type, target) {
       isPrefixalScope: 1,
       deadline: moment().add(3600, 's').unix(),
       insertOnly: 0,
-      endUser: 'www.zhixingclub.com',
+      endUser: 'yanzi',
       fsizeMin: 0,
       fsizeLimit: 10 * 1024 * 1024,
       detectMime: 0,
