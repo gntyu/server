@@ -62,7 +62,7 @@ class DbService extends Service {
       }
       const result = await this.app.mysql.insert('apis', row);
       const insertsuccess = result.affectedRows ===1;
-      console.log('insertsuccess',insertsuccess)
+      // console.log('insertsuccess',insertsuccess)
       if(insertsuccess){
         return Response.success();
       }else{
@@ -77,12 +77,12 @@ class DbService extends Service {
   async updateapi(row,type){
     if(type=='update'){
       const sql = 'SELECT `path` FROM `apis` WHERE `id` !="'+row.id+'" AND`path` ="' + row.path+'"';
-      console.log('update---sql',sql);
+      // console.log('update---sql',sql);
       const isExist = await this.app.mysql.query(sql);
-      console.log('update---isExist',isExist.length);
+      // console.log('update---isExist',isExist.length);
       if(isExist.length==0){
         row.updateTime=new Date();
-        console.log('update---',row);
+        // console.log('update---',row);
         const result = await this.app.mysql.update('apis', row);
         const insertsuccess = result.affectedRows ===1;
         if(insertsuccess){
@@ -94,7 +94,7 @@ class DbService extends Service {
         return Response.fail(140,'path已存在！');
       }
     }else if(type=='delete'){
-      console.log('delete---',row)
+      // console.log('delete---',row)
       const res = await this.app.mysql.get('apis', {id:row.id});
       if(res){
         const result = await this.app.mysql.delete('apis', {id:row.id});
@@ -113,24 +113,24 @@ class DbService extends Service {
     }else{
       name = {path:item.path};
     }
-    console.log('name',name)
+    // console.log('name',name)
     const res = await this.app.mysql.get('apis',name);
     // const data =res.result;
     const data =JSON.parse(res.result); 
     // if(data.urlFilter&&data.urlFilter)
     if(data['urlFilter']){
       const key = data['urlFilter'];
-      console.log('------------',key)
+      // console.log('------------',key)
       if(query[key])data.data[key]=Number(query[key]);
     }
 
-    console.log('chaxun------query',query)
-    console.log('chaxun------data',data)
+    // console.log('chaxun------query',query)
+    // console.log('chaxun------data',data)
     return data;
   }
 
   async apilist (obj){
-    console.log('obj======',obj);
+    // console.log('obj======',obj);
     let sql ='SELECT * FROM `apis` ';
     if(obj&&obj.syscode&&obj.syscode.length>0){
       obj.syscode.map((item,index)=>{
@@ -138,7 +138,7 @@ class DbService extends Service {
       })
     }
     sql += ' ORDER BY `updateTime` DESC'
-    console.log('sql======',sql);
+    // console.log('sql======',sql);
     // const sql = 'SELECT * FROM `apis` WHERE syscode = '+uc+' OR syscode = ''
     const res = await this.app.mysql.query(sql);
     return res;
@@ -159,6 +159,54 @@ class DbService extends Service {
     })
     // console.log('====list====',list)
     return list;
+  }
+
+  async getMyCols(item,query){
+    const res = await this.app.mysql.get('mycols',query);
+    // console.log(res)
+    const data =JSON.parse(res.cols); 
+    return {
+      data
+    };
+  }
+
+  async saveMyCols(item,query){
+    const sql = 'SELECT `id` FROM `mycols` WHERE `path` ="'+query.path+'" AND `serialNumber` ="' + query.serialNumber+'"';
+    const isExist = await this.app.mysql.query(sql);
+    // console.log('update---',isExist);
+    if(isExist.length!=[0]){
+      const row = {
+        id:isExist[0].id,
+        cols: JSON.stringify(query.cols),
+        updateTime: new Date()
+      }
+      const result = await this.app.mysql.update('mycols', row);
+      // console.log('update---result',result);
+      const insertsuccess = result.affectedRows ===1;
+      if(insertsuccess){
+        return Response.success();
+      }else{
+        return Response.fail(140,'更新失败');
+      }
+    }else{
+      const row={
+        id:Tools.randomString(36),
+        path: query.path,
+        serialNumber: query.serialNumber,
+        cols: JSON.stringify(query.cols),
+        createTime: new Date(),
+        updateTime: new Date()
+      }
+      // console.log('row',row)
+      const result = await this.app.mysql.insert('mycols', row);
+      const insertsuccess = result.affectedRows ===1;
+      // console.log('insertsuccess',insertsuccess)
+      if(insertsuccess){
+        return Response.success();
+      }else{
+        return Response.fail(140,'添加失败！');
+      }
+    }
   }
 
 }

@@ -26,6 +26,7 @@ module.exports = app => {
   app.get('/api-portal/:path', jwt, app.controller.userLogin.getapidata);
   app.get('/api-portal/:path/:subpath', jwt, app.controller.userLogin.getapidata);
   app.post('/api-portal/:path', jwt, app.controller.userLogin.getapidata);
+
   app.get('/api/getsys', jwt, app.controller.userLogin.getsys);
 
   app.post('/api/addapi', jwt, app.controller.userLogin.addapi);

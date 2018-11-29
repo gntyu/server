@@ -59,14 +59,22 @@ class userLogin extends Controller {
 
   }
 
+
   async getapidata(){
     const path = this.ctx.params;
     const query = this.ctx.query;
-    console.log('path',path);
-    const res = await this.service.gonews.db.getapidata(path,query);
-    // console.log('typeof-res:',typeof(res));
-  
-    // console.log('result:',result);
+    const body = this.ctx.request.body;
+    console.log('=============path===========',path);
+    let res;
+    if(path.path=='getMyCols'){
+      // console.log('[[[[[[[[[[[[[----getcols--]]]]]]]]]]]]]')
+      res = await this.service.gonews.db.getMyCols(path,body);
+    }else if(path.path=='saveMyCols'){
+      // console.log('[[[[[[[[[[[[[----savecols--]]]]]]]]]]]]]')
+      res = await this.service.gonews.db.saveMyCols(path,body);
+    }else{
+      res = await this.service.gonews.db.getapidata(path,query);
+    }
     this.ctx.body=res
   }
 
