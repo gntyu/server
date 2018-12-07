@@ -38,7 +38,11 @@ class DbService extends Service {
   //存储数据
   async writeapi(obj) {
     console.log('写入API...')
-    const res = await this.app.mysql.get('apis', {path:obj.path,method:obj.method});
+    let param={path:obj.path}
+    if(obj.isStrict){
+      param.method=obj.method
+    }
+    const res = await this.app.mysql.get('apis', param);
     const list = await this.service.gonews.db.getsys();
     let sysname;
     list.map((item)=>{
@@ -173,6 +177,14 @@ class DbService extends Service {
           data =JSON.parse(item.result);
         }
       });
+      if(!data){
+        final.map(item=>{
+          if(!item.method){
+            data =JSON.parse(item.result);
+          }
+        });
+      }
+      
     }else{
       data =JSON.parse(final[0].result); 
     }
