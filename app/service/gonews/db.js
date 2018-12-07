@@ -63,6 +63,7 @@ class DbService extends Service {
         firstPath:pathArr[0],
         secondPath:pathArr[1]||'',
         thirdPath:pathArr[2]||'',
+        forthPath:pathArr[3]||'',
         createTime: new Date(),
         updateTime: new Date(),
       }
@@ -124,31 +125,40 @@ class DbService extends Service {
   }
 
   async getapidata (item,query,body,method){
-    let name ;
-    if(item.secondPath||item.thirdPath){
-      name={ path : item.firstPath+'/'+item.secondPath};
-    }else{
-      name = {path:item.firstPath};
-    }
-    
+    let name =null ;
+    let res =[];
     let data =null;
     let final=null;
 
-    const res = await this.app.mysql.get('apis',name);
-    if(res){//老接口 
+    if(!item.thirdPath){
+      if(item.secondPath){
+        name={ path : item.firstPath+'/'+item.secondPath};
+      }else{
+        name = {path:item.firstPath};
+      }
+      res = await this.app.mysql.select('apis',{where:{...name}});
+    }
+
+    if(res.length>0){//老接口 
       final = res;
     }else{//新接口 
       const newres = await this.app.mysql.select('apis',{where:{...item}});
-      if(!newres){//--判断变量
+      if(newres.length==0){//--未匹配到  -》 开始判断变量
         const sItem={ ...item,secondPath:'$' }
-        const sRes = await this.app.mysql.get('apis',{where:{...sItem}});
-        if(sRes){
+        const sRes = await this.app.mysql.select('apis',{where:{...sItem}});
+        if(sRes.length>0){
           final = sRes;
         }else{
           const tItem={ ...item,thirdPath:'$' }
-          const tRes = await this.app.mysql.get('apis',{where:{...tItem}});
-          if(tRes){
+          const tRes = await this.app.mysql.select('apis',{where:{...tItem}});
+          if(tRes.length>0){
             final = tRes; 
+          }else{
+            const fItem={ ...item,forthPath:'$' }
+            const fRes = await this.app.mysql.select('apis',{where:{...fItem}});
+            if(fRes.length>0){
+              final = fRes; 
+            }
           }
         }
       }else{
@@ -156,7 +166,7 @@ class DbService extends Service {
       }
     }
 
-    console.log('final',final);//-- 结果可能是多个
+    // console.log('final',final);//-- 结果可能是多个
     if(final.length>1){
       final.map(item=>{
         if(item.method==method){
@@ -164,7 +174,7 @@ class DbService extends Service {
         }
       });
     }else{
-      data =JSON.parse(final.result); 
+      data =JSON.parse(final[0].result); 
     }
 
    

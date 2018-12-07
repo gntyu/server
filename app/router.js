@@ -27,12 +27,15 @@ module.exports = app => {
   app.get('/api-portal/:firstPath', jwt, app.controller.userLogin.getapidata);
   app.get('/api-portal/:firstPath/:secondPath', jwt, app.controller.userLogin.getapidata);
   app.get('/api-portal/:firstPath/:secondPath/:thirdPath', jwt, app.controller.userLogin.getapidata);
+  app.get('/api-portal/:firstPath/:secondPath/:thirdPath/:forthPath', jwt, app.controller.userLogin.getapidata);
   app.post('/api-portal/:firstPath', jwt, app.controller.userLogin.getapidata);
   app.post('/api-portal/:firstPath/:secondPath', jwt, app.controller.userLogin.getapidata);
   app.post('/api-portal/:firstPath/:secondPath/:thirdPath', jwt, app.controller.userLogin.getapidata);
+  app.post('/api-portal/:firstPath/:secondPath/:thirdPath/:forthPath', jwt, app.controller.userLogin.getapidata);
   app.delete('/api-portal/:firstPath', jwt, app.controller.userLogin.getapidata);
   app.delete('/api-portal/:firstPath/:secondPath', jwt, app.controller.userLogin.getapidata);
   app.delete('/api-portal/:firstPath/:secondPath/:thirdPath', jwt, app.controller.userLogin.getapidata);
+  app.delete('/api-portal/:firstPath/:secondPath/:thirdPath/:forthPath', jwt, app.controller.userLogin.getapidata);
 
 
 
