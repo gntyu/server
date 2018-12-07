@@ -23,9 +23,18 @@ module.exports = app => {
   app.get('/api/getinfo', jwt, app.controller.userLogin.getinfo);
   app.get('/api/getdync/:id', jwt, app.controller.userLogin.getdync);
 
-  app.get('/api-portal/:path', jwt, app.controller.userLogin.getapidata);
-  app.get('/api-portal/:path/:subpath', jwt, app.controller.userLogin.getapidata);
-  app.post('/api-portal/:path', jwt, app.controller.userLogin.getapidata);
+  //项目测试接口
+  app.get('/api-portal/:firstPath', jwt, app.controller.userLogin.getapidata);
+  app.get('/api-portal/:firstPath/:secondPath', jwt, app.controller.userLogin.getapidata);
+  app.get('/api-portal/:firstPath/:secondPath/:thirdPath', jwt, app.controller.userLogin.getapidata);
+  app.post('/api-portal/:firstPath', jwt, app.controller.userLogin.getapidata);
+  app.post('/api-portal/:firstPath/:secondPath', jwt, app.controller.userLogin.getapidata);
+  app.post('/api-portal/:firstPath/:secondPath/:thirdPath', jwt, app.controller.userLogin.getapidata);
+  app.delete('/api-portal/:firstPath', jwt, app.controller.userLogin.getapidata);
+  app.delete('/api-portal/:firstPath/:secondPath', jwt, app.controller.userLogin.getapidata);
+  app.delete('/api-portal/:firstPath/:secondPath/:thirdPath', jwt, app.controller.userLogin.getapidata);
+
+
 
   app.get('/api/getsys', jwt, app.controller.userLogin.getsys);
 

@@ -64,16 +64,16 @@ class userLogin extends Controller {
     const path = this.ctx.params;
     const query = this.ctx.query;
     const body = this.ctx.request.body;
+    const method = this.ctx.request.method;
     console.log('=============path===========',path);
+    console.log('=============method===========',method);
     let res;
     if(path.path=='getMyCols'){
-      // console.log('[[[[[[[[[[[[[----getcols--]]]]]]]]]]]]]')
       res = await this.service.gonews.db.getMyCols(path,body);
     }else if(path.path=='saveMyCols'){
-      // console.log('[[[[[[[[[[[[[----savecols--]]]]]]]]]]]]]')
       res = await this.service.gonews.db.saveMyCols(path,body);
     }else{
-      res = await this.service.gonews.db.getapidata(path,query);
+      res = await this.service.gonews.db.getapidata(path,query,body,method);
     }
     this.ctx.body=res
   }

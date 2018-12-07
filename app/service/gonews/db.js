@@ -38,7 +38,7 @@ class DbService extends Service {
   //存储数据
   async writeapi(obj) {
     console.log('写入API...')
-    const res = await this.app.mysql.get('apis', {path:obj.path});
+    const res = await this.app.mysql.get('apis', {path:obj.path,method:obj.method});
     const list = await this.service.gonews.db.getsys();
     let sysname;
     list.map((item)=>{
@@ -47,6 +47,7 @@ class DbService extends Service {
       }
     })
     if(!res){
+      const pathArr = obj.path.split('/');
       const row={
         id:Tools.randomString(36),
         path: obj.path,
@@ -57,8 +58,13 @@ class DbService extends Service {
         sysname,
         isRandom:obj.isRandom?1:0,
         isExtend: obj.isExtend?1:0,
+        isStrict: obj.isStrict?1:0,
+        method:obj.isStrict?(obj.method||''):'',
+        firstPath:pathArr[0],
+        secondPath:pathArr[1]||'',
+        thirdPath:pathArr[2]||'',
         createTime: new Date(),
-        updateTime: new Date()
+        updateTime: new Date(),
       }
       const result = await this.app.mysql.insert('apis', row);
       const insertsuccess = result.affectedRows ===1;
@@ -76,11 +82,23 @@ class DbService extends Service {
 
   async updateapi(row,type){
     if(type=='update'){
-      const sql = 'SELECT `path` FROM `apis` WHERE `id` !="'+row.id+'" AND`path` ="' + row.path+'"';
+      const sql = 'SELECT * FROM `apis` WHERE `id` !="'+row.id+'" AND`path` ="' + row.path+'"';
       // console.log('update---sql',sql);
       const isExist = await this.app.mysql.query(sql);
       // console.log('update---isExist',isExist.length);
-      if(isExist.length==0){
+
+      let flag = true;
+      if(isExist.length>0){ 
+        isExist.map(item=>{
+          if(item.method==row.method){
+            flag=false;
+          }
+        })
+        if(!flag){
+          return Response.fail(140,method+'请求方式下的path已存在！');
+        }
+      }
+      if(flag){
         row.updateTime=new Date();
         // console.log('update---',row);
         const result = await this.app.mysql.update('apis', row);
@@ -90,9 +108,8 @@ class DbService extends Service {
         }else{
           return Response.fail(140,'更新失败');
         }
-      }else{
-        return Response.fail(140,'path已存在！');
       }
+     
     }else if(type=='delete'){
       // console.log('delete---',row)
       const res = await this.app.mysql.get('apis', {id:row.id});
@@ -106,26 +123,57 @@ class DbService extends Service {
     }
   }
 
-  async getapidata (item,query){
+  async getapidata (item,query,body,method){
     let name ;
-    if(item.subpath){
-      name={ path : item.path+'/'+item.subpath};
+    if(item.secondPath||item.thirdPath){
+      name={ path : item.firstPath+'/'+item.secondPath};
     }else{
-      name = {path:item.path};
+      name = {path:item.firstPath};
     }
-    // console.log('name',name)
+    
+    let data =null;
+    let final=null;
+
     const res = await this.app.mysql.get('apis',name);
-    // const data =res.result;
-    const data =JSON.parse(res.result); 
-    // if(data.urlFilter&&data.urlFilter)
-    if(data['urlFilter']){
-      const key = data['urlFilter'];
-      // console.log('------------',key)
-      if(query[key])data.data[key]=Number(query[key]);
+    if(res){//老接口 
+      final = res;
+    }else{//新接口 
+      const newres = await this.app.mysql.select('apis',{where:{...item}});
+      if(!newres){//--判断变量
+        const sItem={ ...item,secondPath:'$' }
+        const sRes = await this.app.mysql.get('apis',{where:{...sItem}});
+        if(sRes){
+          final = sRes;
+        }else{
+          const tItem={ ...item,thirdPath:'$' }
+          const tRes = await this.app.mysql.get('apis',{where:{...tItem}});
+          if(tRes){
+            final = tRes; 
+          }
+        }
+      }else{
+        final = newres;
+      }
     }
 
-    // console.log('chaxun------query',query)
-    // console.log('chaxun------data',data)
+    console.log('final',final);//-- 结果可能是多个
+    if(final.length>1){
+      final.map(item=>{
+        if(item.method==method){
+          data =JSON.parse(item.result);
+        }
+      });
+    }else{
+      data =JSON.parse(final.result); 
+    }
+
+   
+    if(data['urlFilter']){
+      const key = data['urlFilter'];
+      if(query[key])data.data[key]=Number(query[key]);
+    }
+    // console.log('data',data)
+
     return data;
   }
 
