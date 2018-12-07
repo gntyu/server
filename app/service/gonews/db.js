@@ -177,7 +177,7 @@ class DbService extends Service {
           data =JSON.parse(item.result);
         }
       });
-      if(!data){
+      if(!data){//若没有约定method ,则返回没有method的
         final.map(item=>{
           if(!item.method){
             data =JSON.parse(item.result);
