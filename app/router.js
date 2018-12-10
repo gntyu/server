@@ -30,10 +30,10 @@ module.exports = app => {
   bases.map(item=>{
     type.map(method=>{
       //当前最多支持到四个路径
-      app[method]('/'+item+'/:firstPath', jwt, app.controller.userLogin.getapidata);
-      app[method]('/'+item+'/:firstPath/:secondPath', jwt, app.controller.userLogin.getapidata);
-      app[method]('/'+item+'/:firstPath/:secondPath/:thirdPath', jwt, app.controller.userLogin.getapidata);
-      app[method]('/'+item+'/:firstPath/:secondPath/:thirdPath/:forthPath', jwt, app.controller.userLogin.getapidata);
+      app[method](`/${item}/:firstPath`, jwt, app.controller.userLogin.getapidata);
+      app[method](`/${item}/:firstPath/:secondPath`, jwt, app.controller.userLogin.getapidata);
+      app[method](`/${item}/:firstPath/:secondPath/:thirdPath`, jwt, app.controller.userLogin.getapidata);
+      app[method](`/${item}/:firstPath/:secondPath/:thirdPath/:forthPath`, jwt, app.controller.userLogin.getapidata);
     })
   })
 
