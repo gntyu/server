@@ -23,19 +23,32 @@ module.exports = app => {
   app.get('/api/getinfo', jwt, app.controller.userLogin.getinfo);
   app.get('/api/getdync/:id', jwt, app.controller.userLogin.getdync);
 
+
   //项目测试接口
-  app.get('/api-portal/:firstPath', jwt, app.controller.userLogin.getapidata);
-  app.get('/api-portal/:firstPath/:secondPath', jwt, app.controller.userLogin.getapidata);
-  app.get('/api-portal/:firstPath/:secondPath/:thirdPath', jwt, app.controller.userLogin.getapidata);
-  app.get('/api-portal/:firstPath/:secondPath/:thirdPath/:forthPath', jwt, app.controller.userLogin.getapidata);
-  app.post('/api-portal/:firstPath', jwt, app.controller.userLogin.getapidata);
-  app.post('/api-portal/:firstPath/:secondPath', jwt, app.controller.userLogin.getapidata);
-  app.post('/api-portal/:firstPath/:secondPath/:thirdPath', jwt, app.controller.userLogin.getapidata);
-  app.post('/api-portal/:firstPath/:secondPath/:thirdPath/:forthPath', jwt, app.controller.userLogin.getapidata);
-  app.delete('/api-portal/:firstPath', jwt, app.controller.userLogin.getapidata);
-  app.delete('/api-portal/:firstPath/:secondPath', jwt, app.controller.userLogin.getapidata);
-  app.delete('/api-portal/:firstPath/:secondPath/:thirdPath', jwt, app.controller.userLogin.getapidata);
-  app.delete('/api-portal/:firstPath/:secondPath/:thirdPath/:forthPath', jwt, app.controller.userLogin.getapidata);
+  const bases =['api-portal','kpi-management','v1'];//三个项目的前缀
+  const type = ['get','post','delete'];//目前三种请求方式
+  bases.map(item=>{
+    type.map(method=>{
+      //当前最多支持到四个路径
+      app[method]('/'+item+'/:firstPath', jwt, app.controller.userLogin.getapidata);
+      app[method]('/'+item+'/:firstPath/:secondPath', jwt, app.controller.userLogin.getapidata);
+      app[method]('/'+item+'/:firstPath/:secondPath/:thirdPath', jwt, app.controller.userLogin.getapidata);
+      app[method]('/'+item+'/:firstPath/:secondPath/:thirdPath/:forthPath', jwt, app.controller.userLogin.getapidata);
+    })
+  })
+
+  // app.get('/api-portal/:firstPath', jwt, app.controller.userLogin.getapidata);
+  // app.get('/api-portal/:firstPath/:secondPath', jwt, app.controller.userLogin.getapidata);
+  // app.get('/api-portal/:firstPath/:secondPath/:thirdPath', jwt, app.controller.userLogin.getapidata);
+  // app.get('/api-portal/:firstPath/:secondPath/:thirdPath/:forthPath', jwt, app.controller.userLogin.getapidata);
+  // app.post('/api-portal/:firstPath', jwt, app.controller.userLogin.getapidata);
+  // app.post('/api-portal/:firstPath/:secondPath', jwt, app.controller.userLogin.getapidata);
+  // app.post('/api-portal/:firstPath/:secondPath/:thirdPath', jwt, app.controller.userLogin.getapidata);
+  // app.post('/api-portal/:firstPath/:secondPath/:thirdPath/:forthPath', jwt, app.controller.userLogin.getapidata);
+  // app.delete('/api-portal/:firstPath', jwt, app.controller.userLogin.getapidata);
+  // app.delete('/api-portal/:firstPath/:secondPath', jwt, app.controller.userLogin.getapidata);
+  // app.delete('/api-portal/:firstPath/:secondPath/:thirdPath', jwt, app.controller.userLogin.getapidata);
+  // app.delete('/api-portal/:firstPath/:secondPath/:thirdPath/:forthPath', jwt, app.controller.userLogin.getapidata);
 
 
 

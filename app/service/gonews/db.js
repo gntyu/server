@@ -104,6 +104,11 @@ class DbService extends Service {
         }
       }
       if(flag){
+        const pathArr = row.path.split('/');
+        row.firstPath=pathArr[0];
+        row.secondPath=pathArr[1]||'';
+        row.thirdPath=pathArr[2]||'';
+        row.forthPath=pathArr[3]||'';
         row.updateTime=new Date();
         // console.log('update---',row);
         const result = await this.app.mysql.update('apis', row);
