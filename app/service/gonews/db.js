@@ -238,7 +238,7 @@ class DbService extends Service {
 
   async getMyCols(item,query){
     const res = await this.app.mysql.get('mycols',query);
-    // console.log(res)
+    console.log(res)
     const data =JSON.parse(res.cols); 
     return {
       data

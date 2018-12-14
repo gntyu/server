@@ -68,9 +68,9 @@ class userLogin extends Controller {
     console.log('=============path===========',path);
     console.log('=============method===========',method);
     let res;
-    if(path.path=='getMyCols'){
+    if(path.firstPath=='getMyCols'){
       res = await this.service.gonews.db.getMyCols(path,body);
-    }else if(path.path=='saveMyCols'){
+    }else if(path.firstPath=='saveMyCols'){
       res = await this.service.gonews.db.saveMyCols(path,body);
     }else{
       res = await this.service.gonews.db.getapidata(path,query,body,method);
