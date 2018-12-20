@@ -107,13 +107,14 @@ class userLogin extends Controller {
   async deleteapi(){
     const obj = this.ctx.request.body;
     const res = await this.service.gonews.db.updateapi(obj,'delete');//数据写入数据库
-    console.log('res',res)
+    
     this.ctx.body=res
   }
 
   async apilist(){
     const obj = this.ctx.request.body;
     const res = await this.service.gonews.db.apilist(obj);
+    console.log('res',res)
     this.ctx.body={
       data:{
         list:res

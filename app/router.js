@@ -25,7 +25,7 @@ module.exports = app => {
 
 
   //项目测试接口
-  const bases =['api-portal','kpi-management','v1'];//三个项目的前缀
+  const bases =['api-portal','kpi-management','v1','api'];//各个项目的前缀
   const type = ['get','post','delete'];//目前三种请求方式
   bases.map(item=>{
     type.map(method=>{
@@ -52,39 +52,39 @@ module.exports = app => {
 
 
 
-  app.get('/api/getsys', jwt, app.controller.userLogin.getsys);
+  app.get('/lyapi/getsys', jwt, app.controller.userLogin.getsys);
 
-  app.post('/api/addapi', jwt, app.controller.userLogin.addapi);
-  app.post('/api/updateapi', jwt, app.controller.userLogin.updateapi);
-  app.post('/api/deleteapi', jwt, app.controller.userLogin.deleteapi);
-  app.post('/api/apilist', jwt, app.controller.userLogin.apilist);
+  app.post('/lyapi/addapi', jwt, app.controller.userLogin.addapi);
+  app.post('/lyapi/updateapi', jwt, app.controller.userLogin.updateapi);
+  app.post('/lyapi/deleteapi', jwt, app.controller.userLogin.deleteapi);
+  app.post('/lyapi/apilist', jwt, app.controller.userLogin.apilist);
 
-  app.get('/api/getlist', jwt, app.controller.userLogin.getlist);
-  app.get('/api/getdbdata', jwt, app.controller.userLogin.getdbdata);
+  app.get('/lyapi/getlist', jwt, app.controller.userLogin.getlist);
+  app.get('/lyapi/getdbdata', jwt, app.controller.userLogin.getdbdata);
 
 
 
   // weChatApi
-  app.get('/api/wechat/appid', jwt, app.controller.weChatApi.getAppId);
-  app.get('/api/wechat/token', jwt, app.controller.weChatApi.getToken);
-  app.get('/api/wechat/ticket', jwt, app.controller.weChatApi.getTicket);
-  app.post('/api/wechat/sdkinfo', jwt, app.controller.weChatApi.getSdkInfo);
-  // 获取用户信息snsapi_base
-  app.get('/api/wechat/snsapi_base/:code', jwt, app.controller.weChatApi.snsapiBase);
-  // 获取用户信息snsapi_userinfo
-  app.get('/api/wechat/snsapi_userinfo/:code', jwt, app.controller.weChatApi.snsapiUserInfo);
-  // 获取用户信息
-  app.get('/api/wechat/userinfo/:openid', jwt, app.controller.weChatApi.userInfo);
-  // 获取prepayId
-  app.post('/api/wechat/prepay', jwt, app.controller.weChatApi.getPrePayId);
-  // 支付回调
-  app.post('/api/wechat/paynotify', app.controller.weChatApi.getPayNotify);
+  // app.get('/api/wechat/appid', jwt, app.controller.weChatApi.getAppId);
+  // app.get('/api/wechat/token', jwt, app.controller.weChatApi.getToken);
+  // app.get('/api/wechat/ticket', jwt, app.controller.weChatApi.getTicket);
+  // app.post('/api/wechat/sdkinfo', jwt, app.controller.weChatApi.getSdkInfo);
+  // // 获取用户信息snsapi_base
+  // app.get('/api/wechat/snsapi_base/:code', jwt, app.controller.weChatApi.snsapiBase);
+  // // 获取用户信息snsapi_userinfo
+  // app.get('/api/wechat/snsapi_userinfo/:code', jwt, app.controller.weChatApi.snsapiUserInfo);
+  // // 获取用户信息
+  // app.get('/api/wechat/userinfo/:openid', jwt, app.controller.weChatApi.userInfo);
+  // // 获取prepayId
+  // app.post('/api/wechat/prepay', jwt, app.controller.weChatApi.getPrePayId);
+  // // 支付回调
+  // app.post('/api/wechat/paynotify', app.controller.weChatApi.getPayNotify);
 
-  for (const item in entities) {
-    app.get(`/api/${item}/detail/:id`, jwt, 'commonCrud.detail');
-    app.get(`/api/${item}/list`, jwt, 'commonCrud.list');
-    app.post(`/api/${item}/add`, jwt, 'commonCrud.add');
-    app.post(`/api/${item}/edit`, jwt, 'commonCrud.edit');
-    app.post(`/api/${item}/del/:id`, jwt, 'commonCrud.del');
-  }
+  // for (const item in entities) {
+  //   app.get(`/api/${item}/detail/:id`, jwt, 'commonCrud.detail');
+  //   app.get(`/api/${item}/list`, jwt, 'commonCrud.list');
+  //   app.post(`/api/${item}/add`, jwt, 'commonCrud.add');
+  //   app.post(`/api/${item}/edit`, jwt, 'commonCrud.edit');
+  //   app.post(`/api/${item}/del/:id`, jwt, 'commonCrud.del');
+  // }
 };

@@ -147,7 +147,7 @@ class DbService extends Service {
       }
       res = await this.app.mysql.select('apis',{where:{...name}});
     }
-
+    
     if(res.length>0){//老接口 
       final = res;
     }else{//新接口 
@@ -205,7 +205,7 @@ class DbService extends Service {
   }
 
   async apilist (obj){
-    // console.log('obj======',obj);
+    console.log('obj======',obj);
     let sql ='SELECT * FROM `apis` ';
     if(obj&&obj.syscode&&obj.syscode.length>0){
       obj.syscode.map((item,index)=>{
@@ -213,7 +213,7 @@ class DbService extends Service {
       })
     }
     sql += ' ORDER BY `updateTime` DESC'
-    // console.log('sql======',sql);
+    console.log('sql======',sql);
     // const sql = 'SELECT * FROM `apis` WHERE syscode = '+uc+' OR syscode = ''
     const res = await this.app.mysql.query(sql);
     return res;
