@@ -53,6 +53,8 @@ module.exports = app => {
 
 
   app.get('/lyapi/getsys', jwt, app.controller.userLogin.getsys);
+  app.get('/lyapi/testLong', jwt, app.controller.userLogin.testLong);
+
 
   app.post('/lyapi/addapi', jwt, app.controller.userLogin.addapi);
   app.post('/lyapi/updateapi', jwt, app.controller.userLogin.updateapi);

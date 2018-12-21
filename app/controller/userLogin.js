@@ -31,6 +31,28 @@ class userLogin extends Controller {
     this.ctx.body='dynic!'
   }
 
+  //测试大数据！
+  async testLong() {
+    const getData = Array.from({ length: 10000 }).map((item, index) => {
+      return {
+        id: index + 1,
+        name: `张一峰-${index + 1}`,
+        title: `主治医师-${index + 1}`,
+        date: `2018-06-${index + 1}`,
+        endDate: `2018-06-${index + 1}`,
+        validData: `2018-06-${index + 1}`,
+        category: '皮肤科',
+        state: '已审核',
+        approver: '刘建明',
+      };
+    });
+    this.ctx.body={
+      data:{
+        list:getData
+      }
+    };
+  }
+
   //获取爬取的数据
   async getlist() {
     const page = this.ctx.query;

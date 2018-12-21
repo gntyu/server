@@ -42,6 +42,10 @@ class DbService extends Service {
     if(obj.isStrict){
       param.method=obj.method
     }
+    const sql ='SELECT * FROM `apis` ORDER BY `createTime` DESC';
+    const all = await this.app.mysql.query(sql);
+    const newOrder =all[0].order+1;
+    console.log('newOrder',newOrder)
     const res = await this.app.mysql.get('apis', param);
     const list = await this.service.gonews.db.getsys();
     let sysname;
@@ -70,6 +74,7 @@ class DbService extends Service {
         forthPath:pathArr[3]||'',
         createTime: new Date(),
         updateTime: new Date(),
+        order:newOrder
       }
       const result = await this.app.mysql.insert('apis', row);
       const insertsuccess = result.affectedRows ===1;
