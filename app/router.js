@@ -1,33 +1,32 @@
 'use strict';
 const entities = require('./conf/entities');
+const { getApiConfig } = require('./util/getContext');
 
 
-module.exports = app => {
+module.exports = async app => {
   const jwt = app.middleware.jwt();
 
-  // 上传图片
-  app.post('/api/picture/upload', jwt, app.controller.resourceUpload.upload);
-  // 上传音乐
-  app.post('/api/music/upload', jwt, app.controller.resourceUpload.upload);
-  // 上传视频
-  app.post('/api/video/upload', jwt, app.controller.resourceUpload.upload);
-  // 上传文件
-  app.post('/api/file/upload', jwt, app.controller.resourceUpload.upload);
-  // 用户登录
-  // app.post('/api/login', jwt, app.controller.accountLogin.login);
+  app.get('/lyapi/getsys', jwt, app.controller.userLogin.getsys);
+  app.get('/lyapi/testLong', jwt, app.controller.userLogin.testLong);
+  app.post('/lyapi/addapi', jwt, app.controller.userLogin.addapi);
+  app.post('/lyapi/updateapi', jwt, app.controller.userLogin.updateapi);
+  app.post('/lyapi/deleteapi', jwt, app.controller.userLogin.deleteapi);
+  app.post('/lyapi/apilist', jwt, app.controller.userLogin.apilist);
+  app.get('/lyapi/getlist', jwt, app.controller.userLogin.getlist);
+  app.get('/lyapi/getdbdata', jwt, app.controller.userLogin.getdbdata);
 
-
-  //test
-  app.post('/api/login', jwt, app.controller.userLogin.info);
-  app.post('/api/register', jwt, app.controller.userLogin.register);
-  app.get('/api/getinfo', jwt, app.controller.userLogin.getinfo);
-  app.get('/api/getdync/:id', jwt, app.controller.userLogin.getdync);
+  app.post('/lyapi/addsystem', jwt, app.controller.userLogin.addsystem);
+  app.post('/lyapi/updatesystem', jwt, app.controller.userLogin.updatesystem);
+  app.post('/lyapi/deletesystem', jwt, app.controller.userLogin.deletesystem);
+  app.post('/lyapi/system', jwt, app.controller.userLogin.system);
 
 
   //项目测试接口
-  const bases =['api-portal','kpi-management','v1','api'];//各个项目的前缀
+  const bases =['api-portal','kpi-management','v1','api'];//AMS,KPI,UC,RELAX 各个项目的前缀 -》目前写死，后续会维护一张表
+  const context = await getApiConfig(app);//s数据库维护的表
+  console.log('context',context);
   const type = ['get','post','delete'];//目前三种请求方式
-  bases.map(item=>{
+  context.map(item=>{
     type.map(method=>{
       //当前最多支持到四个路径
       app[method](`/${item}/:firstPath`, jwt, app.controller.userLogin.getapidata);
@@ -37,34 +36,24 @@ module.exports = app => {
     })
   })
 
-  // app.get('/api-portal/:firstPath', jwt, app.controller.userLogin.getapidata);
-  // app.get('/api-portal/:firstPath/:secondPath', jwt, app.controller.userLogin.getapidata);
-  // app.get('/api-portal/:firstPath/:secondPath/:thirdPath', jwt, app.controller.userLogin.getapidata);
-  // app.get('/api-portal/:firstPath/:secondPath/:thirdPath/:forthPath', jwt, app.controller.userLogin.getapidata);
-  // app.post('/api-portal/:firstPath', jwt, app.controller.userLogin.getapidata);
-  // app.post('/api-portal/:firstPath/:secondPath', jwt, app.controller.userLogin.getapidata);
-  // app.post('/api-portal/:firstPath/:secondPath/:thirdPath', jwt, app.controller.userLogin.getapidata);
-  // app.post('/api-portal/:firstPath/:secondPath/:thirdPath/:forthPath', jwt, app.controller.userLogin.getapidata);
-  // app.delete('/api-portal/:firstPath', jwt, app.controller.userLogin.getapidata);
-  // app.delete('/api-portal/:firstPath/:secondPath', jwt, app.controller.userLogin.getapidata);
-  // app.delete('/api-portal/:firstPath/:secondPath/:thirdPath', jwt, app.controller.userLogin.getapidata);
-  // app.delete('/api-portal/:firstPath/:secondPath/:thirdPath/:forthPath', jwt, app.controller.userLogin.getapidata);
+
+  // 上传图片
+  // app.post('/api/picture/upload', jwt, app.controller.resourceUpload.upload);
+  // // 上传音乐
+  // app.post('/api/music/upload', jwt, app.controller.resourceUpload.upload);
+  // // 上传视频
+  // app.post('/api/video/upload', jwt, app.controller.resourceUpload.upload);
+  // // 上传文件
+  // app.post('/api/file/upload', jwt, app.controller.resourceUpload.upload);
+  // 用户登录
+  // app.post('/api/login', jwt, app.controller.accountLogin.login);
 
 
-
-  app.get('/lyapi/getsys', jwt, app.controller.userLogin.getsys);
-  app.get('/lyapi/testLong', jwt, app.controller.userLogin.testLong);
-
-
-  app.post('/lyapi/addapi', jwt, app.controller.userLogin.addapi);
-  app.post('/lyapi/updateapi', jwt, app.controller.userLogin.updateapi);
-  app.post('/lyapi/deleteapi', jwt, app.controller.userLogin.deleteapi);
-  app.post('/lyapi/apilist', jwt, app.controller.userLogin.apilist);
-
-  app.get('/lyapi/getlist', jwt, app.controller.userLogin.getlist);
-  app.get('/lyapi/getdbdata', jwt, app.controller.userLogin.getdbdata);
-
-
+  //test
+  // app.post('/api/login', jwt, app.controller.userLogin.info);
+  // app.post('/api/register', jwt, app.controller.userLogin.register);
+  // app.get('/api/getinfo', jwt, app.controller.userLogin.getinfo);
+  // app.get('/api/getdync/:id', jwt, app.controller.userLogin.getdync);
 
   // weChatApi
   // app.get('/api/wechat/appid', jwt, app.controller.weChatApi.getAppId);

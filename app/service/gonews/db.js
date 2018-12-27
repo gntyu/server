@@ -11,6 +11,65 @@ class DbService extends Service {
     console.log('db',data[0])
   }
 
+  async addsystem(){
+    const sql ='SELECT * FROM `system` ORDER BY `createTime` DESC';
+    const all = await this.app.mysql.query(sql);
+
+    const newOrder =all.length>0?all[0].order+1:1;
+    const row= {
+      id:Tools.randomString(36),
+      sysCode:'--',
+      sysName:'--',
+      context: '--',
+      order:'--',
+      createTime: new Date(),
+      updateTime: new Date(),
+      order:newOrder
+    }
+
+    const result = await this.app.mysql.insert('system',row);
+    const insertsuccess = result.affectedRows ===1;
+   
+    if(insertsuccess){
+      return Response.success();
+    }else{
+      return Response.fail(140,'添加失败！');
+    }
+  }
+
+  async updatesystem(row,type){
+
+    if(type=='update'){
+      const res = await this.app.mysql.get('system', {id:row.id});
+      if(res){ 
+        const newdata = {
+          ...res,
+          ...row,
+          updateTime:new Date()
+        };
+        // console.log('update---',row);
+        const result = await this.app.mysql.update('system', newdata);
+        const insertsuccess = result.affectedRows ===1;
+        if(insertsuccess){
+          return Response.success();
+        }else{
+          return Response.fail(140,'更新失败');
+        }
+      }
+    }else if(type=='delete'){
+      const res = await this.app.mysql.get('system', {id:row.id});
+      // console.log('delete---res',res)
+
+      if(res){
+        const result = await this.app.mysql.delete('system', {id:row.id});
+        return Response.success();
+      }else{
+        return Response.fail(140,'数据不存在！');
+      }
+
+    }
+  }
+
   //存储数据
   async writedata(arr) {
     console.log('写入数据...')
@@ -138,38 +197,46 @@ class DbService extends Service {
     }
   }
 
-  async getapidata (item,query,body,method){
+  async getapidata (item,query,body,method,context){
+    const result = await this.app.mysql.select('system');
+    const system =result.filter(sys=>sys.context==context);
+    const sysLimit={syscode:system[0].sysCode};
+    const wholeItems={
+      firstPath:'',secondPath:'',thirdPath:'',forthPath:'',
+      ...item
+    }
+    console.log('wholeItems------->',wholeItems)
     let name =null ;
     let res =[];
     let data =null;
     let final=null;
 
-    if(!item.thirdPath){
-      if(item.secondPath){
-        name={ path : item.firstPath+'/'+item.secondPath};
+    if(!wholeItems.thirdPath){
+      if(wholeItems.secondPath){
+        name={ path : wholeItems.firstPath+'/'+wholeItems.secondPath};
       }else{
-        name = {path:item.firstPath};
+        name = {path:wholeItems.firstPath};
       }
-      res = await this.app.mysql.select('apis',{where:{...name}});
+      res = await this.app.mysql.select('apis',{where:{...name,...sysLimit}});
     }
     
     if(res.length>0){//老接口 
       final = res;
     }else{//新接口 
-      const newres = await this.app.mysql.select('apis',{where:{...item}});
+      const newres = await this.app.mysql.select('apis',{where:{...wholeItems,...sysLimit}});
       if(newres.length==0){//--未匹配到  -》 开始判断变量
-        const sItem={ ...item,secondPath:'$' }
-        const sRes = await this.app.mysql.select('apis',{where:{...sItem}});
+        const sItem={ ...wholeItems,secondPath:'$' }
+        const sRes = await this.app.mysql.select('apis',{where:{...sItem,...sysLimit}});
         if(sRes.length>0){
           final = sRes;
         }else{
-          const tItem={ ...item,thirdPath:'$' }
-          const tRes = await this.app.mysql.select('apis',{where:{...tItem}});
+          const tItem={ ...wholeItems,thirdPath:'$' }
+          const tRes = await this.app.mysql.select('apis',{where:{...tItem,...sysLimit}});
           if(tRes.length>0){
             final = tRes; 
           }else{
-            const fItem={ ...item,forthPath:'$' }
-            const fRes = await this.app.mysql.select('apis',{where:{...fItem}});
+            const fItem={ ...wholeItems,forthPath:'$' }
+            const fRes = await this.app.mysql.select('apis',{where:{...fItem,...sysLimit}});
             if(fRes.length>0){
               final = fRes; 
             }
@@ -224,16 +291,24 @@ class DbService extends Service {
     return res;
   }
 
+  async syslist(obj){
+    let sql ='SELECT * FROM `system` ';
+    sql += ' ORDER BY `updateTime` DESC'
+    const res = await this.app.mysql.query(sql);
+    return res;
+  }
+
+
   async getsys (){
-    const sql = 'SELECT DISTINCT `sysname`,`syscode`  FROM `apis`'
+    const sql = 'SELECT DISTINCT `sysName`,`sysCode`  FROM `system`'
     // console.log('sql------sys',sql)
     const res = await this.app.mysql.query(sql);
     let list=[];
     res.map((item)=>{
-      if(item.sysname&&item.syscode){
+      if(item.sysName&&item.sysCode){
         list.push({
-          label:item.sysname,
-          value:item.syscode,
+          label:item.sysName,
+          value:item.sysCode,
         })
       }
     })

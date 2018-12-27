@@ -82,20 +82,24 @@ class userLogin extends Controller {
   }
 
 
+
   async getapidata(){
     const path = this.ctx.params;
     const query = this.ctx.query;
+
     const body = this.ctx.request.body;
     const method = this.ctx.request.method;
-    console.log('=============path===========',path);
-    console.log('=============method===========',method);
+    const context = this.ctx.request.url.split('/')[1];
+
+    console.log('=============context,method===========',context,method);
+
     let res;
     if(path.firstPath=='getMyCols'){
       res = await this.service.gonews.db.getMyCols(path,body);
     }else if(path.firstPath=='saveMyCols'){
       res = await this.service.gonews.db.saveMyCols(path,body);
     }else{
-      res = await this.service.gonews.db.getapidata(path,query,body,method);
+      res = await this.service.gonews.db.getapidata(path,query,body,method,context);
     }
     this.ctx.body=res
   }
@@ -113,9 +117,7 @@ class userLogin extends Controller {
 
   async addapi(){
     const obj = this.ctx.request.body;
-    // console.log(obj)
     const res = await this.service.gonews.db.writeapi(obj);//数据写入数据库
-    // console.log('res',res)
     this.ctx.body=res
   }
 
@@ -129,7 +131,6 @@ class userLogin extends Controller {
   async deleteapi(){
     const obj = this.ctx.request.body;
     const res = await this.service.gonews.db.updateapi(obj,'delete');//数据写入数据库
-    
     this.ctx.body=res
   }
 
@@ -142,6 +143,36 @@ class userLogin extends Controller {
         list:res
       }
     }
+  }
+
+    
+  async system (){
+    const obj = this.ctx.request.body;
+    const res = await this.service.gonews.db.syslist(obj);
+    // console.log('res',res)
+    this.ctx.body={
+      data:{
+        list:res
+      }
+    }
+  }
+
+  async addsystem (){
+    const res = await this.service.gonews.db.addsystem();//数据写入数据库
+    this.ctx.body=res
+  }
+
+  async updatesystem (){
+    const obj = this.ctx.request.body;
+    const res = await this.service.gonews.db.updatesystem(obj,'update');//数据写入数据库
+    // console.log('res',res)
+    this.ctx.body=res
+  }
+
+  async deletesystem (){
+    const obj = this.ctx.request.body;
+    const res = await this.service.gonews.db.updatesystem(obj,'delete');//数据写入数据库
+    this.ctx.body=res
   }
 
  
