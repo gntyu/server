@@ -248,22 +248,26 @@ class DbService extends Service {
     }
 
     // console.log('final',final);//-- 结果可能是多个
+    let api ;
     if(final.length>1){
       final.map(item=>{
         if(item.method==method){
           data =JSON.parse(item.result);
+          api=item;
         }
       });
       if(!data){//若没有约定method ,则返回没有method的
         final.map(item=>{
           if(!item.method){
             data =JSON.parse(item.result);
+            api=item;
           }
         });
       }
       
     }else{
       data =JSON.parse(final[0].result); 
+      api=final[0];
     }
 
    
@@ -273,7 +277,30 @@ class DbService extends Service {
     }
     // console.log('data',data)
 
+    //查询成功，统计次数！和工作流
+    this.service.gonews.db.count(api);
+
+    //查询成功，返回数据！
     return data;
+  }
+
+  async count(api){
+    api.times=api.times?api.times+1:1;
+    console.log(`${api.path}-api.times>>>>>>${api.times}`)
+    this.app.mysql.update('apis', api);
+    const row={
+      id:Tools.randomString(20),
+      apiPath: api.path,
+      apiId: api.id,
+      syscode:api.syscode,
+      time: new Date()
+    }
+    const result = await this.app.mysql.insert('flows', row);
+    const insertsuccess = result.affectedRows ===1;
+      // console.log('insertsuccess',insertsuccess)
+      if(!insertsuccess){
+        return Response.fail(140,'工作流插入失败');
+      }
   }
 
   async apilist (obj){
