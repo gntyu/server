@@ -13,13 +13,17 @@ module.exports = async app => {
   app.post('/lyapi/deleteapi', jwt, app.controller.userLogin.deleteapi);
   app.post('/lyapi/apilist', jwt, app.controller.userLogin.apilist);
   app.get('/lyapi/getlist', jwt, app.controller.userLogin.getlist);
-  app.get('/lyapi/getdbdata', jwt, app.controller.userLogin.getdbdata);
+  // app.get('/lyapi/getdbdata', jwt, app.controller.userLogin.getdbdata);
 
   app.post('/lyapi/addsystem', jwt, app.controller.userLogin.addsystem);
   app.post('/lyapi/updatesystem', jwt, app.controller.userLogin.updatesystem);
   app.post('/lyapi/deletesystem', jwt, app.controller.userLogin.deletesystem);
   app.post('/lyapi/system', jwt, app.controller.userLogin.system);
 
+  //接口使用情况的数据
+  app.get('/lyapi/today', jwt, app.controller.userLogin.today);
+  app.get('/lyapi/month', jwt, app.controller.userLogin.month);
+  app.get('/lyapi/tops', jwt, app.controller.userLogin.tops);
 
   //项目测试接口
   const bases =['api-portal','kpi-management','v1','api'];//AMS,KPI,UC,RELAX 各个项目的前缀 -》目前写死，后续会维护一张表

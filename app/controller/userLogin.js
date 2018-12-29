@@ -177,12 +177,30 @@ class userLogin extends Controller {
 
  
 
-  //查询数据库
-  async getdbdata() {
-    // const list = await this.service.gonews.news.getqc();
-    // console.log(userInfo);
-    const data = await this.service.gonews.db.getdb();
-    this.ctx.body='database';
+  //查询今日活跃
+  async today() {
+    const data = await this.service.gonews.show.today('today');
+    this.ctx.body={
+      data,
+      code:20000
+    };
+  }
+  //查询本月活跃
+  async month() {
+    const data = await this.service.gonews.show.today('month');
+    this.ctx.body={
+      data,
+      code:20000
+    };
+  }
+
+  //查询top20
+  async tops() {
+    const data = await this.service.gonews.show.tops();
+    this.ctx.body={
+      data,
+      code:20000
+    };
   }
 
 }
