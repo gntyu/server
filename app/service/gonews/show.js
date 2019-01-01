@@ -11,14 +11,36 @@ class ShowService extends Service {
     console.log('db',data[0])
   }
   
-   //查询今日活跃
-   async tops(type) {
+   //查询top20
+   async tops() {
     const sql=`select * from apis order by times desc limit 20`;
-    console.log('sql',sql)
     const res = await this.app.mysql.query(sql);
-    console.log('res',res)
+    const newArr=res.map(item=>{
+        return{
+            ...item,
+            xdata:item.path,
+            ydata:item.times
+        }
+    })
     return {
-        list:res
+        list:newArr
+    };
+   }
+   //查询各个系统使用情况
+   async system() {
+    const sql=`select distinct(syscode) from flows`;
+    const res = await this.app.mysql.query(sql);
+    const newArr=[];
+    for (const x of res) {//只有这个for of循环中可以使用异步
+        const value = await this.app.mysql.query(`select syscode from flows where syscode='${x.syscode}'`);
+        newArr.push({
+            xdata:x.syscode,
+            ydata:value.length
+        });
+    }
+    // console.log('newArr----',newArr)
+    return {
+        list:newArr
     };
    }
    //查询今日活跃
@@ -26,44 +48,48 @@ class ShowService extends Service {
     let now,interval;
     if(type=='today'){
         now = new Date().toLocaleDateString();
-        interval= 10*60*1000;//默认10分钟，会面可通过传参获取
+        interval= 10*60*1000;//默认10分钟，后面可通过传参获取
     }else if(type=='month'){
         now = new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-1';
-        interval= 24*60*60*1000;//默认10分钟，会面可通过传参获取
+        interval= 24*60*60*1000;//一天
+    }else if(type=='recent'){
+        now='2018-01-01';
+        interval= 24*60*60*1000;//一天
     }
 
     // console.log('now',now);
     // console.log('interval',interval);
     const today = await this.app.mysql.query(`select time from flows where time> '${now}' order by time asc`);
-    const start =today[0].time.getTime();
-
-    // const end =today[today.length-1].time.getTime();
-    // console.log('start',new Date(start).toLocaleString());
-    // console.log('end',new Date(end).toLocaleString());
-    // const count =Math.ceil((end-start)/interval);
-    // console.log('count',count);
-
-    const newarr =[];
-    let index =0,times=0;
-    let xtime = start + index*interval;
-    today.map(item=>{
-       if(item.time<=xtime){
-        times++;
-       }else{
-        newarr.push({
-            date:getTimeString(xtime),
-            value:times
+    // console.log('today1',today);
+    if(today.length>0){
+        const start =today[0].time.getTime();
+        const newarr =[];
+        let index =0,times=0;
+        let xtime = start + index*interval;
+        today.map(item=>{
+           if(item.time<=xtime){
+            times++;
+           }else{
+            newarr.push({
+                date:getTimeString(xtime),
+                value:times
+            });
+            index++;
+            times=0;
+            xtime = start + index*interval;
+           }
         });
-        index++;
-        times=0;
-        xtime = start + index*interval;
-       }
-    });
-   
-    return {
-        list:newarr,
-        total:today.length
-    };
+        return {
+            list:newarr,
+            total:today.length
+        };
+    }else{
+        return {
+            list:[],
+            total:0
+        };
+    }
+
 
     function getTimeString(timestap){
 
@@ -77,7 +103,7 @@ class ShowService extends Service {
 
         if(type=='today'){
             return time;
-        }else if(type=='month'){
+        }else if(type=='month'||type=='recent'){
             return myday;
         }
       

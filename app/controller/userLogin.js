@@ -194,6 +194,23 @@ class userLogin extends Controller {
     };
   }
 
+  //查询最近活跃
+  async recent() {
+    const data = await this.service.gonews.show.today('recent');
+    this.ctx.body={
+      data,
+      code:20000
+    };
+  }
+  //查询最近活跃
+  async system() {
+    const data = await this.service.gonews.show.system();
+    this.ctx.body={
+      data,
+      code:20000
+    };
+  }
+
   //查询top20
   async tops() {
     const data = await this.service.gonews.show.tops();

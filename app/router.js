@@ -23,7 +23,9 @@ module.exports = async app => {
   //接口使用情况的数据
   app.get('/lyapi/today', jwt, app.controller.userLogin.today);
   app.get('/lyapi/month', jwt, app.controller.userLogin.month);
+  app.get('/lyapi/recent', jwt, app.controller.userLogin.recent);
   app.get('/lyapi/tops', jwt, app.controller.userLogin.tops);
+  app.get('/lyapi/system', jwt, app.controller.userLogin.system);
 
   //项目测试接口
   const bases =['api-portal','kpi-management','v1','api'];//AMS,KPI,UC,RELAX 各个项目的前缀 -》目前写死，后续会维护一张表
