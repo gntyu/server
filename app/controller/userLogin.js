@@ -20,14 +20,14 @@ class userLogin extends Controller {
   //获取get的传参
   async getinfo() {
     const dd = this.ctx.query;
-    console.log(dd)
+    // console.log(dd)
     this.ctx.body='result!'
   }
 
   //获取动态路由传值
   async getdync() {
     const dd = this.ctx.params;
-    console.log(dd)
+    // console.log(dd)
     this.ctx.body='dynic!'
   }
 
@@ -56,12 +56,12 @@ class userLogin extends Controller {
   //获取爬取的数据
   async getlist() {
     const page = this.ctx.query;
-    console.log('page',page);
+    // console.log('page',page);
 
     const res = await this.service.gonews.news.getqc();
     const latest = await this.service.gonews.db.writedata(res.lists);//数据写入数据库
 
-    console.log('latest',latest)
+    // console.log('latest',latest)
     let newList;
     if(latest.length>20){
       newList=latest.slice(0,20);
@@ -146,7 +146,7 @@ class userLogin extends Controller {
   }
 
     
-  async system (){
+  async systems (){
     const obj = this.ctx.request.body;
     const res = await this.service.gonews.db.syslist(obj);
     // console.log('res',res)

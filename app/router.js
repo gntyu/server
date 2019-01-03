@@ -18,7 +18,7 @@ module.exports = async app => {
   app.post('/lyapi/addsystem', jwt, app.controller.userLogin.addsystem);
   app.post('/lyapi/updatesystem', jwt, app.controller.userLogin.updatesystem);
   app.post('/lyapi/deletesystem', jwt, app.controller.userLogin.deletesystem);
-  app.post('/lyapi/system', jwt, app.controller.userLogin.system);
+  app.post('/lyapi/systems', jwt, app.controller.userLogin.systems);
 
   //接口使用情况的数据
   app.get('/lyapi/today', jwt, app.controller.userLogin.today);
