@@ -249,6 +249,20 @@ class DbService extends Service {
 
     // console.log('final',final);//-- 结果可能是多个
     let api ;
+    if(final==null){//没有结果，检测url双变量$ -->一般变量在url  都是数字的情况
+      let newItems={};
+      newItems.firstPath=wholeItems.firstPath*1==wholeItems.firstPath*1?'$':wholeItems.firstPath;
+      newItems.secondPath=wholeItems.secondPath*1==wholeItems.secondPath*1?'$':wholeItems.secondPath;
+      newItems.thirdPath=wholeItems.thirdPath*1==wholeItems.thirdPath*1?'$':wholeItems.thirdPath;
+      newItems.forthPath=wholeItems.forthPath*1==wholeItems.forthPath*1?'$':wholeItems.forthPath;
+      console.log('newItems-----',newItems);
+      const newRes = await this.app.mysql.select('apis',{where:{...newItems,...sysLimit}});
+      if(newRes.length>0){
+        final = newRes; 
+      }
+    }
+    // console.log('final-----',final);
+    
     if(final.length>1){
       final.map(item=>{
         if(item.method==method){
@@ -264,7 +278,6 @@ class DbService extends Service {
           }
         });
       }
-      
     }else{
       data =JSON.parse(final[0].result); 
       api=final[0];
