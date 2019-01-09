@@ -51,9 +51,11 @@ class ShowService extends Service {
         interval= 10*60*1000;//默认10分钟，后面可通过传参获取
     }else if(type=='month'){
         now = new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-1';
+        // console.log('month',now)
         interval= 24*60*60*1000;//一天
     }else if(type=='recent'){
         now='2018-01-01';
+        // console.log('recent',now)
         interval= 24*60*60*1000;//一天
     }
 
@@ -62,13 +64,30 @@ class ShowService extends Service {
     const today = await this.app.mysql.query(`select time from flows where time> '${now}' order by time asc`);
     // console.log('today1',today);
     if(today.length>0){
-        const start =today[0].time.getTime();
+        let start;
+        if(type=='today'){
+            start =today[0].time.getTime();
+        }else{
+            const date =today[0].time;//不能链式-；-
+            date.setHours(23);
+            date.setMinutes(59);
+            date.setSeconds(59);
+            date.setMilliseconds(999);
+            start=date.getTime();
+            // console.log('start',start)
+        }
         const newarr =[];
-        let index =0,times=0;
+        let times=0,index=0;
         let xtime = start + index*interval;
-        today.map(item=>{
-           if(item.time<=xtime){
+        today.map((item,inx)=>{
+           if(item.time.getTime()<=xtime){
             times++;
+            if(inx+1==today.length){
+                newarr.push({
+                    date:getTimeString(xtime),
+                    value:times
+                });
+            }
            }else{
             newarr.push({
                 date:getTimeString(xtime),
@@ -79,6 +98,7 @@ class ShowService extends Service {
             xtime = start + index*interval;
            }
         });
+
         return {
             list:newarr,
             total:today.length

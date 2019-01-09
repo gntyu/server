@@ -249,7 +249,7 @@ class DbService extends Service {
 
     // console.log('final',final);//-- 结果可能是多个
     let api ;
-    if(final==null){//没有结果，检测url双变量$ -->一般变量在url  都是数字的情况
+    if(final==null){//没有结果，检测url多变量$ -->一般变量在url  都是数字的情况
       let newItems={};
       newItems.firstPath=wholeItems.firstPath*1==wholeItems.firstPath*1?'$':wholeItems.firstPath;
       newItems.secondPath=wholeItems.secondPath*1==wholeItems.secondPath*1?'$':wholeItems.secondPath;
