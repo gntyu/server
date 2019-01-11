@@ -29,7 +29,9 @@ module.exports = async app => {
 
   //项目测试接口
   const bases =['api-portal','kpi-management','v1','api'];//AMS,KPI,UC,RELAX 各个项目的前缀 -》目前写死，后续会维护一张表
-  const context = await getApiConfig(app);//s数据库维护的表
+  const result = await getApiConfig(app);//s数据库维护的表
+  //去重
+  const context= [...new Set(result)];
   console.log('context',context);
   const type = ['get','post','delete'];//目前三种请求方式
   context.map(item=>{

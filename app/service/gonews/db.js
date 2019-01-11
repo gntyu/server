@@ -8,7 +8,7 @@ const Tools = require('../../util/tools.js');
 class DbService extends Service {
   async getdb() {
     const data = await this.app.mysql.query('select name,password from user where name = ?', 'h');
-    console.log('db',data[0])
+    // console.log('db',data[0])
   }
 
   async addsystem(){
@@ -104,7 +104,7 @@ class DbService extends Service {
     const sql ='SELECT * FROM `apis` ORDER BY `createTime` DESC';
     const all = await this.app.mysql.query(sql);
     const newOrder =all[0].order+1;
-    console.log('newOrder',newOrder)
+    // console.log('newOrder',newOrder)
     const res = await this.app.mysql.get('apis', param);
     const list = await this.service.gonews.db.getsys();
     let sysname;
@@ -199,8 +199,9 @@ class DbService extends Service {
 
   async getapidata (item,query,body,method,context){
     const result = await this.app.mysql.select('system');
-    const system =result.filter(sys=>sys.context==context);
-    const sysLimit={syscode:system[0].sysCode};
+    const system =result.filter(sys=>sys.context==context).map(item=>item.sysCode);
+    console.log('系统：',system);
+    const sysLimit={syscode:system};
     const wholeItems={
       firstPath:'',secondPath:'',thirdPath:'',forthPath:'',
       ...item
@@ -255,7 +256,7 @@ class DbService extends Service {
       newItems.secondPath=wholeItems.secondPath*1==wholeItems.secondPath*1?'$':wholeItems.secondPath;
       newItems.thirdPath=wholeItems.thirdPath*1==wholeItems.thirdPath*1?'$':wholeItems.thirdPath;
       newItems.forthPath=wholeItems.forthPath*1==wholeItems.forthPath*1?'$':wholeItems.forthPath;
-      console.log('newItems-----',newItems);
+      // console.log('newItems-----',newItems);
       const newRes = await this.app.mysql.select('apis',{where:{...newItems,...sysLimit}});
       if(newRes.length>0){
         final = newRes; 
@@ -317,7 +318,7 @@ class DbService extends Service {
   }
 
   async apilist (obj){
-    console.log('obj======',obj);
+    // console.log('obj======',obj);    
     let sql ='SELECT * FROM `apis` ';
     if(obj&&obj.syscode&&obj.syscode.length>0){
       obj.syscode.map((item,index)=>{
@@ -325,7 +326,7 @@ class DbService extends Service {
       })
     }
     sql += ' ORDER BY `updateTime` DESC'
-    console.log('sql======',sql);
+    // console.log('sql======',sql);
     // const sql = 'SELECT * FROM `apis` WHERE syscode = '+uc+' OR syscode = ''
     const res = await this.app.mysql.query(sql);
     return res;

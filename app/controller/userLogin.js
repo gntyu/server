@@ -106,7 +106,7 @@ class userLogin extends Controller {
 
   async getsys(){
     const res = await this.service.gonews.db.getsys();
-    console.log('typeof-res:',typeof(res));
+    // console.log('typeof-res:',typeof(res));
     this.ctx.body={
       data:{
         list:res
@@ -124,7 +124,7 @@ class userLogin extends Controller {
   async updateapi(){
     const obj = this.ctx.request.body;
     const res = await this.service.gonews.db.updateapi(obj,'update');//数据写入数据库
-    console.log('res',res)
+    // console.log('res',res)
     this.ctx.body=res
   }
 
@@ -137,7 +137,7 @@ class userLogin extends Controller {
   async apilist(){
     const obj = this.ctx.request.body;
     const res = await this.service.gonews.db.apilist(obj);
-    console.log('res',res)
+    // console.log('res',res)
     this.ctx.body={
       data:{
         list:res
