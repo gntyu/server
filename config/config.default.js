@@ -36,7 +36,7 @@ module.exports = appInfo => {
       host: 'localhost',
       port: '3306',
       user: 'root',
-      password: '121121121',
+      password: '123456',
       // 数据库名
       database: 'admin-template',
     },
