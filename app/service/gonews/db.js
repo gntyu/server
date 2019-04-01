@@ -150,9 +150,10 @@ class DbService extends Service {
   }
 
   async updateapi(row,type){
+    console.log(row,type)
     if(type=='update'){
-      const sql = 'SELECT * FROM `apis` WHERE `id` !="'+row.id+'" AND`path` ="' + row.path+'"';
-      // console.log('update---sql',sql);
+      const sql = 'SELECT * FROM `apis` WHERE `id` !="'+row.id+'" AND`path` ="' + row.path+'"'+' AND`syscode` ="' + row.syscode+'"';
+
       const isExist = await this.app.mysql.query(sql);
       // console.log('update---isExist',isExist.length);
 
