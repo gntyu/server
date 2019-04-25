@@ -16,7 +16,7 @@
     "jwt-simple": "^0.5.3",
     "koa-bodyparser": "^4.2.1",
     "koa-xml-body": "^2.0.0",
-    "moment": "^2.22.2",
+    "moment": "^2.24.0",
     "parameter": "^3.3.0",
     "qiniu": "^7.2.1",
     "stream-wormhole": "^1.1.0",

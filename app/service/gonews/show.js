@@ -1,8 +1,10 @@
 'use strict';
 
+const moment = require('moment');
 const Service = require('egg').Service;
 const Response = require('../../util/response.js');
 const Tools = require('../../util/tools.js');
+
 
 
 class ShowService extends Service {
@@ -45,69 +47,90 @@ class ShowService extends Service {
    }
    //查询今日活跃
    async today(type) {
-    let now,interval;
     if(type=='today'){
-        now = new Date().toLocaleDateString();
-        interval= 10*60*1000;//默认10分钟，后面可通过传参获取
-    }else if(type=='month'){
-        now = new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-1';
-        // console.log('month',now)
-        interval= 24*60*60*1000;//一天
-    }else if(type=='recent'){
-        now='2018-01-01';
-        // console.log('recent',now)
-        interval= 24*60*60*1000;//一天
-    }
+        const now = moment().format('YYYY-MM-DD');
+        const interval= 10*60*1000;//默认10分钟，后面可通过传参获取
+        const today = await this.app.mysql.query(`select time from flows where date = '${now}' order by time asc`);
 
-    // console.log('now',now);
-    // console.log('interval',interval);
-    const today = await this.app.mysql.query(`select time from flows where time> '${now}' order by time asc`);
-    // console.log('today1',today);
-    if(today.length>0){
-        let start;
-        if(type=='today'){
+        if(today.length>0){
+            let start;
             start =today[0].time.getTime();
-        }else{
-            const date =today[0].time;//不能链式-；-
-            date.setHours(23);
-            date.setMinutes(59);
-            date.setSeconds(59);
-            date.setMilliseconds(999);
-            start=date.getTime();
-            // console.log('start',start)
-        }
-        const newarr =[];
-        let times=0,index=0;
-        let xtime = start + index*interval;
-        today.map((item,inx)=>{
-           if(item.time.getTime()<=xtime){
-            times++;
-            if(inx+1==today.length){
+            const newarr =[];
+            let times=0,index=0;
+            let xtime = start + index*interval;
+            today.map((item,inx)=>{
+                if(item.time.getTime()<=xtime){
+                times++;
+                if(inx+1==today.length){
+                    newarr.push({
+                        date:getTimeString(xtime),
+                        value:times
+                    });
+                }
+                }else{
                 newarr.push({
                     date:getTimeString(xtime),
                     value:times
                 });
-            }
-           }else{
-            newarr.push({
-                date:getTimeString(xtime),
-                value:times
+                index++;
+                times=0;
+                xtime = start + index*interval;
+                }
             });
-            index++;
-            times=0;
-            xtime = start + index*interval;
-           }
-        });
-
-        return {
-            list:newarr,
-            total:today.length
-        };
+            return {
+                list:newarr,
+                total:today.length
+            };
+        }else{
+            return {
+                list:[],
+                total:0
+            };
+        }
     }else{
-        return {
+        const yestoday=moment().subtract(1,'days').format('YYYY-MM-DD');
+        const lastAll = await this.app.mysql.query(`select distinct(date) from flows where time < '${yestoday}' order by time desc`);
+        if(lastAll.length>0){
+            for (const item of lastAll) {//只有这个for of循环中可以使用异步 
+                const date =moment(item.date).format('YYYY-MM-DD');
+                const count = await this.app.mysql.query(`select * from flows where date='${date}'`);
+                const row ={
+                    id:date,
+                    date:date,
+                    times:count.length,
+                    create_time:new Date()
+                }
+                const dateRows=await this.app.mysql.query(`select * from date_flows where date='${date}'`);
+                if(!dateRows||dateRows.length==0){
+                    const result = await this.app.mysql.insert('date_flows',row);
+                    const insertsuccess = result.affectedRows ===1;
+                    if(!insertsuccess){
+                        console.log('插入date_flows失败');
+                    }else{
+                        await this.app.mysql.delete('flows', {date:item.date});
+                    }
+                }
+            }
+        }
+        const res= {
             list:[],
             total:0
         };
+        let start= '2018-01-01',end = moment().format('YYYY-MM-DD');
+        if(type=='month'){
+            start = moment().subtract(1,'month').endOf('days').format('YYYY-MM-DD');
+        }
+        const monthRows = await this.app.mysql.query(`select * from date_flows where date>'${start}' and date<'${end}'`);
+        let sum=0;
+        res.list=monthRows.map(item=>{
+            sum += item.times
+            return{
+                value:item.times,
+                date:moment(item.date).format('YYYY-MM-DD')
+            }
+        }),
+        res.total=sum;
+        return res;
     }
 
 

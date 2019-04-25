@@ -308,7 +308,8 @@ class DbService extends Service {
       apiPath: api.path,
       apiId: api.id,
       syscode:api.syscode,
-      time: new Date()
+      time: new Date(),
+      date:moment().format('YYYY-MMDD')
     }
     const result = await this.app.mysql.insert('flows', row);
     const insertsuccess = result.affectedRows ===1;
