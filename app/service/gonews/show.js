@@ -28,16 +28,23 @@ class ShowService extends Service {
         list:newArr
     };
    }
+
    //查询各个系统使用情况
    async system() {
-    const sql=`select distinct(syscode) from flows`;
+    const sql=`select distinct(syscode) from apis`;
     const res = await this.app.mysql.query(sql);
     const newArr=[];
     for (const x of res) {//只有这个for of循环中可以使用异步
-        const value = await this.app.mysql.query(`select syscode from flows where syscode='${x.syscode}'`);
+        const arr = await this.app.mysql.query(`select * from apis where syscode='${x.syscode}'`);
+        let sum=0;
+        arr.map(item=>{
+            if(item.times&&!isNaN(Number(item.times))){
+                sum+=Number(item.times);
+            }
+        })
         newArr.push({
             xdata:x.syscode,
-            ydata:value.length
+            ydata:sum
         });
     }
     // console.log('newArr----',newArr)

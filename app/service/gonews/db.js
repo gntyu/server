@@ -1,8 +1,10 @@
 'use strict';
 
 const Service = require('egg').Service;
+const moment = require('moment');
 const Response = require('../../util/response.js');
 const Tools = require('../../util/tools.js');
+
 
 
 class DbService extends Service {
@@ -309,7 +311,7 @@ class DbService extends Service {
       apiId: api.id,
       syscode:api.syscode,
       time: new Date(),
-      date:moment().format('YYYY-MMDD')
+      date:moment().format('YYYY-MM-DD')
     }
     const result = await this.app.mysql.insert('flows', row);
     const insertsuccess = result.affectedRows ===1;
