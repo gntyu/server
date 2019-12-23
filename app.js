@@ -27,6 +27,7 @@ module.exports = app => {
 };
 
 const apiCount = function(app) {
+  debugger;
   console.log(`API共计${app.router.stack.length}个,内容如下`);
   app.router.stack.forEach(item => {
     console.log(JSON.stringify({

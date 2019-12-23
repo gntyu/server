@@ -2,7 +2,6 @@
 
 const Response = require('../util/response.js');
 const Tools = require('../util/tools.js');
-debugger;
 const mysql = require('mysql');
 
 // const result = this.app.mysql.insert('user', { name: 'Hello World' ,password:"shjdfgl"});

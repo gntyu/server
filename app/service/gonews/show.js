@@ -52,6 +52,7 @@ class ShowService extends Service {
         list:newArr
     };
    }
+   
    //查询今日活跃
    async today(type) {
     if(type=='today'){
@@ -95,7 +96,7 @@ class ShowService extends Service {
             };
         }
     }else{
-        const yestoday=moment().subtract(1,'days').format('YYYY-MM-DD');
+        const yestoday=moment().format('YYYY-MM-DD');
         const lastAll = await this.app.mysql.query(`select distinct(date) from flows where time < '${yestoday}' order by time desc`);
         if(lastAll.length>0){
             for (const item of lastAll) {//只有这个for of循环中可以使用异步 

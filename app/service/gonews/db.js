@@ -98,8 +98,11 @@ class DbService extends Service {
 
   //存储数据
   async writeapi(obj) {
-    console.log('写入API...')
-    let param={path:obj.path}
+    // console.log('写入API...', obj);
+    let param = {
+      path: obj.path,
+      syscode:obj.syscode,//不同系统可重复
+    }
     if(obj.isStrict){
       param.method=obj.method
     }
@@ -330,8 +333,6 @@ class DbService extends Service {
       })
     }
     sql += ' ORDER BY `updateTime` DESC'
-    // console.log('sql======',sql);
-    // const sql = 'SELECT * FROM `apis` WHERE syscode = '+uc+' OR syscode = ''
     const res = await this.app.mysql.query(sql);
     return res;
   }
