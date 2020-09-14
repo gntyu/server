@@ -157,8 +157,9 @@ class userLogin extends Controller {
     }
   }
 
-  async addsystem (){
-    const res = await this.service.gonews.db.addsystem();//数据写入数据库
+  async addsystem() {
+    const obj = this.ctx.request.body;
+    const res = await this.service.gonews.db.addsystem(obj);//数据写入数据库
     this.ctx.body=res
   }
 

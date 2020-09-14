@@ -13,17 +13,16 @@ class DbService extends Service {
     // console.log('db',data[0])
   }
 
-  async addsystem(){
+  async addsystem(obj){
     const sql ='SELECT * FROM `system` ORDER BY `createTime` DESC';
     const all = await this.app.mysql.query(sql);
 
     const newOrder =all.length>0?all[0].order+1:1;
     const row= {
       id:Tools.randomString(36),
-      sysCode:'--',
-      sysName:'--',
-      context: '--',
-      order:'--',
+      sysCode:obj.sysCode||'--',
+      sysName:obj.sysName||'--',
+      context: obj.context||'--',
       createTime: new Date(),
       updateTime: new Date(),
       order:newOrder
