@@ -83,7 +83,7 @@ class userLogin extends Controller {
 
 
 
-  async getapidata(){
+  async getapidata() {
     const path = this.ctx.params;
     const query = this.ctx.query;
 

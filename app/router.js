@@ -1,5 +1,11 @@
+/*
+ * @Author       : luyan
+ * @Date         : 2018-10-11 17:13:52
+ * @LastEditors  : luyan
+ * @LastEditTime : 2020-11-20 16:50:41
+ * @FilePath     : /server/app/router.js
+ */
 'use strict';
-const entities = require('./conf/entities');
 const { getApiConfig } = require('./util/getContext');
 
 
@@ -36,11 +42,14 @@ module.exports = async app => {
   const type = ['get','post','delete'];//目前三种请求方式
   context.map(item=>{
     type.map(method=>{
-      //当前最多支持到四个路径
+      //当前最多支持到四个路径 ,大于4个路径，直接匹配全路径，不识别变量
       app[method](`/${item}/:firstPath`, jwt, app.controller.userLogin.getapidata);
       app[method](`/${item}/:firstPath/:secondPath`, jwt, app.controller.userLogin.getapidata);
       app[method](`/${item}/:firstPath/:secondPath/:thirdPath`, jwt, app.controller.userLogin.getapidata);
       app[method](`/${item}/:firstPath/:secondPath/:thirdPath/:forthPath`, jwt, app.controller.userLogin.getapidata);
+      app[method](`/${item}/:firstPath/:secondPath/:thirdPath/:forthPath/:fifth`, jwt, app.controller.userLogin.getapidata);
+      app[method](`/${item}/:firstPath/:secondPath/:thirdPath/:forthPath/:fifth/:sixth`, jwt, app.controller.userLogin.getapidata);
+      app[method](`/${item}/:firstPath/:secondPath/:thirdPath/:forthPath/:fifth/:sixth/:seventh`, jwt, app.controller.userLogin.getapidata);
     })
   })
 
